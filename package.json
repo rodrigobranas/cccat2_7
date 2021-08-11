@@ -1,0 +1,18 @@
+{
+  "name": "cccat2_1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc && jest ./dist --forceExit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "pg-promise": "^10.11.0",
+    "typescript": "^4.3.5"
+  }
+}
