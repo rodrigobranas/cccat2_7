@@ -6,6 +6,9 @@ import PlaceOrderInput from "../../src/application/PlaceOrderInput";
 import ZipcodeCalculatorAPIMemory from "../../src/infra/gateway/memory/ZipcodeCalculatorAPIMemory";
 import ItemRepositoryDatabase from "../../src/infra/repository/database/ItemRepositoryDatabase";
 import PgPromiseDatabase from "../../src/infra/database/PgPromiseDatabase";
+import CouponRepositoryDatabase from "../../src/infra/repository/database/CouponRepositoryDatabase";
+import OrderRepositoryDatabase from "../../src/infra/repository/database/OrderRepositoryDatabase";
+import MemoryRepositoryFactory from "../../src/infra/factory/MemoryRepositoryFactory";
 
 test("Deve fazer um pedido", async function () {
     const input = new PlaceOrderInput({
@@ -18,11 +21,12 @@ test("Deve fazer um pedido", async function () {
         ],
         coupon: "VALE20"
     });
-    const itemRepository = new ItemRepositoryDatabase(new PgPromiseDatabase());
-    const couponRepository = new CouponRepositoryMemory();
-    const orderRepository = new OrderRepositoryMemory();
+    const repositoryFactory = new MemoryRepositoryFactory();
+    // const orderRepository = new OrderRepositoryDatabase(PgPromiseDatabase.getInstance());
+    const orderRepository = OrderRepositoryMemory.getInstance();
+    await orderRepository.clean();
     const zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
-    const placeOrder = new PlaceOrder(itemRepository, couponRepository, orderRepository, zipcodeCalculator);
+    const placeOrder = new PlaceOrder(repositoryFactory, zipcodeCalculator);
     const output = await placeOrder.execute(input);
     expect(output.total).toBe(5982);
 });
@@ -38,11 +42,12 @@ test("Deve fazer um pedido com cupom de desconto expirado", async function () {
         ],
         coupon: "VALE20_EXPIRED"
     });
-    const itemRepository = new ItemRepositoryMemory();
-    const couponRepository = new CouponRepositoryMemory();
-    const orderRepository = new OrderRepositoryMemory();
+    const repositoryFactory = new MemoryRepositoryFactory();
+    // const orderRepository = new OrderRepositoryDatabase(PgPromiseDatabase.getInstance());
+    const orderRepository = OrderRepositoryMemory.getInstance();
+    await orderRepository.clean();
     const zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
-    const placeOrder = new PlaceOrder(itemRepository, couponRepository, orderRepository, zipcodeCalculator);
+    const placeOrder = new PlaceOrder(repositoryFactory, zipcodeCalculator);
     const output = await placeOrder.execute(input);
     expect(output.total).toBe(7400);
 });
@@ -58,11 +63,35 @@ test("Deve fazer um pedido com cálculo de frete", async function () {
         ],
         coupon: "VALE20_EXPIRED"
     });
-    const itemRepository = new ItemRepositoryMemory();
-    const couponRepository = new CouponRepositoryMemory();
-    const orderRepository = new OrderRepositoryMemory();
+    const repositoryFactory = new MemoryRepositoryFactory();
+    // const orderRepository = new OrderRepositoryDatabase(PgPromiseDatabase.getInstance());
+    const orderRepository = OrderRepositoryMemory.getInstance();
+    await orderRepository.clean();
     const zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
-    const placeOrder = new PlaceOrder(itemRepository, couponRepository, orderRepository, zipcodeCalculator);
+    const placeOrder = new PlaceOrder(repositoryFactory, zipcodeCalculator);
     const output = await placeOrder.execute(input);
     expect(output.freight).toBe(310);
+});
+
+test("Deve fazer um pedido calculando o código", async function () {
+    const input = new PlaceOrderInput({
+        cpf: "778.278.412-36",
+        zipcode: "11.111-11",
+        items: [
+            { id: "1", quantity: 2},
+            { id: "2", quantity: 1},
+            { id: "3", quantity: 3}
+        ],
+        issueDate: new Date("2020-10-10"),
+        coupon: "VALE20_EXPIRED"
+    });
+    const repositoryFactory = new MemoryRepositoryFactory();
+    // const orderRepository = new OrderRepositoryDatabase(PgPromiseDatabase.getInstance());
+    const orderRepository = OrderRepositoryMemory.getInstance();
+    await orderRepository.clean();
+    const zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
+    const placeOrder = new PlaceOrder(repositoryFactory, zipcodeCalculator);
+    await placeOrder.execute(input);
+    const output = await placeOrder.execute(input);
+    expect(output.code).toBe("202000000002");
 });
