@@ -25,7 +25,7 @@ export default class GetOrder {
         const order = await this.orderRepository.get(code);
         const orderItems: any[] = [];
         for (const orderItem of order.items) {
-            const item = await this.itemRepository.getById(orderItem.id);
+            const item = await this.itemRepository.getById(orderItem.idItem);
             const orderItemOutput = {
                 itemDescription: item?.description,
                 price: orderItem.price,

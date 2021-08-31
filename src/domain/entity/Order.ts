@@ -21,8 +21,8 @@ export default class Order {
         this.code = new OrderCode(issueDate, sequence);
     }
 
-    addItem (id: string, price: number, quantity: number) {
-        this.items.push(new OrderItem(id, price, quantity));
+    addItem (idItem: number, price: number, quantity: number) {
+        this.items.push(new OrderItem(idItem, price, quantity));
     }
 
     addCoupon (coupon: Coupon) {
