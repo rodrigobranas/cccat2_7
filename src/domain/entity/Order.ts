@@ -8,6 +8,7 @@ export default class Order {
     items: OrderItem[];
     coupon: Coupon | undefined;
     freight: number;
+    taxes: number;
     code: OrderCode;
     issueDate: Date;
     sequence: number;
@@ -16,6 +17,7 @@ export default class Order {
         this.cpf = new Cpf(cpf);
         this.items = [];
         this.freight = 0;
+        this.taxes = 0;
         this.issueDate = issueDate;
         this.sequence = sequence;
         this.code = new OrderCode(issueDate, sequence);

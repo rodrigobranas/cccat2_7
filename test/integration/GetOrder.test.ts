@@ -1,16 +1,22 @@
-import CouponRepositoryMemory from "../../src/infra/repository/memory/CouponRepositoryMemory";
-import ItemRepositoryMemory from "../../src/infra/repository/memory/ItemRepositoryMemory";
-import OrderRepositoryMemory from "../../src/infra/repository/memory/OrderRepositoryMemory";
-import PlaceOrder from "../../src/application/PlaceOrder";
-import PlaceOrderInput from "../../src/application/PlaceOrderInput";
+import PlaceOrder from "../../src/application/place-order/PlaceOrder";
+import PlaceOrderInput from "../../src/application/place-order/PlaceOrderInput";
 import ZipcodeCalculatorAPIMemory from "../../src/infra/gateway/memory/ZipcodeCalculatorAPIMemory";
-import ItemRepositoryDatabase from "../../src/infra/repository/database/ItemRepositoryDatabase";
-import PgPromiseDatabase from "../../src/infra/database/PgPromiseDatabase";
-import GetOrder from "../../src/application/GetOrder";
-import OrderRepositoryDatabase from "../../src/infra/repository/database/OrderRepositoryDatabase";
-import CouponRepositoryDatabase from "../../src/infra/repository/database/CouponRepositoryDatabase";
-import MemoryRepositoryFactory from "../../src/infra/factory/MemoryRepositoryFactory";
+import GetOrder from "../../src/application/get-order/GetOrder";
 import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import RepositoryFactory from "../../src/domain/factory/RepositoryFactory";
+import ZipcodeCalculatorAPI from "../../src/domain/gateway/ZipcodeCalculatorAPI";
+
+let repositoryFactory: RepositoryFactory;
+let zipcodeCalculator: ZipcodeCalculatorAPI;
+
+beforeEach(async function () {
+    repositoryFactory = new DatabaseRepositoryFactory();
+    const orderRepository = repositoryFactory.createOrderRepository();
+    await orderRepository.clean();
+    const stockEntryRepository = repositoryFactory.createStockEntryRepository();
+    await stockEntryRepository.clean();
+    zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
+});
 
 test("Deve consultar um pedido", async function () {
     const input = new PlaceOrderInput({
@@ -23,11 +29,6 @@ test("Deve consultar um pedido", async function () {
         ],
         coupon: "VALE20"
     });
-
-    const repositoryFactory = new DatabaseRepositoryFactory();
-    const orderRepository = repositoryFactory.createOrderRepository();
-    await orderRepository.clean();
-    const zipcodeCalculator = new ZipcodeCalculatorAPIMemory();
     const placeOrder = new PlaceOrder(repositoryFactory, zipcodeCalculator);
     const output = await placeOrder.execute(input);
     const getOrder = new GetOrder(repositoryFactory);

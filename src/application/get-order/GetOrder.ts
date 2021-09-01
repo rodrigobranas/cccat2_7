@@ -1,14 +1,14 @@
-import CouponRepository from "../domain/repository/CouponRepository";
-import FreightCalculator from "../domain/service/FreightCalculator";
-import ItemRepository from "../domain/repository/ItemRepository";
-import Order from "../domain/entity/Order"
-import OrderRepository from "../domain/repository/OrderRepository";
-import PlaceOrderInput from "./PlaceOrderInput";
-import PlaceOrderOutput from "./PlaceOrderOutput";
-import ZipcodeCalculatorAPI from "../domain/gateway/ZipcodeCalculatorAPI";
-import ZipcodeCalculatorAPIMemory from "../infra/gateway/memory/ZipcodeCalculatorAPIMemory";
+import CouponRepository from "../../domain/repository/CouponRepository";
+import FreightCalculator from "../../domain/service/FreightCalculator";
+import ItemRepository from "../../domain/repository/ItemRepository";
+import Order from "../../domain/entity/Order"
+import OrderRepository from "../../domain/repository/OrderRepository";
+import PlaceOrderInput from "../place-order/PlaceOrderInput";
+import PlaceOrderOutput from "../place-order/PlaceOrderOutput";
+import ZipcodeCalculatorAPI from "../../domain/gateway/ZipcodeCalculatorAPI";
+import ZipcodeCalculatorAPIMemory from "../../infra/gateway/memory/ZipcodeCalculatorAPIMemory";
 import GetOrderOutput from "./GetOrderOutput";
-import RepositoryFactory from "../domain/factory/RepositoryFactory";
+import RepositoryFactory from "../../domain/factory/RepositoryFactory";
 
 export default class GetOrder {
     itemRepository: ItemRepository;
@@ -36,6 +36,7 @@ export default class GetOrder {
         return new GetOrderOutput({
             code: order.code.value,
             freight: order.freight,
+            taxes: order.taxes,
             total: order.getTotal(),
             orderItems
         });
