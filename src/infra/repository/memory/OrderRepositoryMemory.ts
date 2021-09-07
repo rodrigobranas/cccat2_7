@@ -17,7 +17,6 @@ export default class OrderRepositoryMemory implements OrderRepository {
     }
 
     async get(code: string): Promise<Order> {
-        console.log(code, this.orders);
         const order = this.orders.find(order => order.code.value === code);
         if (!order) throw new Error("Order not found");
         return Promise.resolve(order);

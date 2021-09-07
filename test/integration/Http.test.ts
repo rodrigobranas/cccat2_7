@@ -21,6 +21,7 @@ test.skip("Deve invocar a API /orders", async function () {
                 { idItem: 2, quantity: 1},
                 { idItem: 3, quantity: 3}
             ],
+            issueDate: new Date("2021-10-10"),
             coupon: "VALE20"
         }
     });

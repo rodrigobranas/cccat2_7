@@ -15,6 +15,7 @@ export default class RoutesConfig {
     }
 
     build () {
+
         this.http.on("get", "/orders/${code}", async (params: any, body: any) => {
             const getOrder = new GetOrder(this.repositoryFactory);
             const order = await getOrder.execute(params.code);
@@ -23,6 +24,7 @@ export default class RoutesConfig {
 
         this.http.on("post", "/orders", async (params: any, body: any) => {
             const placeOrder = new PlaceOrder(this.repositoryFactory, new ZipcodeCalculatorAPIMemory());
+            body.issueDate = new Date(body.issueDate);
             const order = await placeOrder.execute(body);
             return order;
         });
