@@ -8,6 +8,9 @@ export default class HapiHttp implements Http {
         this.server = Hapi.server({});
     }
 
+    async filter(fn: any): Promise<void> {
+    }
+
     convertUrl (url: string) {
         return url.replace(/\$/g, "");
     }

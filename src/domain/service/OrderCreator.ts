@@ -30,9 +30,7 @@ export default class OrderCreator {
         this.stockEntryRepository = repositoryFactory.createStockEntryRepository();
         this.zipcodeCalculator = zipcodeCalculator;
     }
-    // unit of work
-    // eventos
-    // operações de compensação padrão saga
+
     async create (input: PlaceOrderInput) {
         const sequence = await this.orderRepository.count() + 1;
         const order = new Order(input.cpf, input.issueDate, sequence);
@@ -51,7 +49,7 @@ export default class OrderCreator {
             const quantity = stockCalculator.calculate(stockEntries);
             if (quantity < orderItem.quantity) throw new Error("Out of stock");
             this.stockEntryRepository.save(new StockEntry(item.id, "out", orderItem.quantity, new Date()));
-            // EventPublisher.publish(new OrderCreated(infos order))
+            // EventPublisher.publish(new OrderCreated(order))
         }
         if (input.coupon) {
             const coupon = await this.couponRepository.getByCode(input.coupon);
